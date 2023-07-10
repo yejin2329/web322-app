@@ -14,6 +14,7 @@ function getAllPosts(){
     });
 }
 
+
 //to get all categories
 function getCategories(){
     return new Promise((resolve, reject)=>{
@@ -25,6 +26,7 @@ function getCategories(){
     });
 }
 
+
 function initialize(){
     return new Promise((resolve, reject)=>{
         fs.readFile(path.join(__dirname, 'data', "posts.json"), 'utf8', (err, postData)=>{
@@ -34,8 +36,7 @@ function initialize(){
             }
            
                 posts=JSON.parse(postData);
-                resolve();
-        
+              
         
             fs.readFile(path.join(__dirname,'data', "categories.json"), 'utf8',(err, categoriesData)=>{
                 if(err){
@@ -43,7 +44,9 @@ function initialize(){
                     return;
                 }
                
-                    categories=JSON.parse(categoriesData);
+                const parsedCategories = JSON.parse(categoriesData);
+                categories = parsedCategories.map((category) => ({ id: category.id, category: category.category }));
+        
                     resolve();
                 
             } );
@@ -53,13 +56,18 @@ function initialize(){
 
 function getPublishedPosts(){
     return new Promise((resolve, reject)=>{
-        const publishedPosts=posts.filter(post=>post.published===true);
+        const publishedPosts=posts.filter((post)=>post.published===true);
         if(publishedPosts.length>0){
             resolve(publishedPosts)
         }else{
             reject("no results returned");
         }
     });
+}
+
+//add new function getPublishedPostsByCategory
+function getPublishedPostsByCategory(category){
+    return posts.filter(post=>post.published===true&&post.category===category);
 }
 
 //add addPost
@@ -72,6 +80,10 @@ function addPost(postData){
         }
 
         postData.id=posts.length+1;
+
+        //set the postDate to the current date
+        postData.postDate=getCurrentDate();
+
         posts.push(postData);
         resolve(postData);
     });
@@ -119,4 +131,4 @@ function getPostById(id){
     });
 }
 
-module.exports={initialize, getAllPosts, getPublishedPosts, getCategories, addPost, getPostsByCategory, getPostsByMinDate, getPostById};
+module.exports={initialize, getAllPosts, getPublishedPosts, getCategories, addPost, getPostsByCategory, getPostsByMinDate, getPostById, getPublishedPostsByCategory};
