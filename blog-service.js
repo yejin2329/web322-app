@@ -1,3 +1,4 @@
+
 const Sequelize = require('sequelize');
 var sequelize = new Sequelize('vzvdrfij', 'vzvdrfij', 'Uc9QxkQK-tZnkLNL-JPDPjUchxSbBEv4', {
  host: 'mahmud.db.elephantsql.com',
